@@ -24,21 +24,20 @@ class Board extends React.Component {
     // renderSquare()
 
 
-
-    handleClick(i) {
-        const squares = this.state.squares.slice();
-        if (calculateWinner(squares) || squares[i]) {
-            //early return to ignore click if there is a winner or the
-            // square is already filled
-            return;
-        }
-        squares[i] = this.state.xIsNext ? 'X' : 'O';
-        this.setState({
-            squares: squares,
-            xIsNext: !this.state.xIsNext,
-        });
-        this.setState({squares: squares});
-    }
+    // handleClick(i) {
+    //     const squares = this.state.squares.slice();
+    //     if (calculateWinner(squares) || squares[i]) {
+    //         //early return to ignore click if there is a winner or the
+    //         // square is already filled
+    //         return;
+    //     }
+    //     squares[i] = this.state.xIsNext ? 'X' : 'O';
+    //     this.setState({
+    //         squares: squares,
+    //         xIsNext: !this.state.xIsNext,
+    //     });
+    //     this.setState({squares: squares});
+    // } moving to Game
 
     renderSquare(i) {
         return (
@@ -64,7 +63,7 @@ class Board extends React.Component {
         }
         return (
             <div>
-                <div className="status">{status}</div>
+                {/*<div className="status">{status}</div>*/}
                 <div className="board-row">
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}
@@ -91,11 +90,31 @@ class Game extends React.Component {
         super(props);
         this.state = {
             history: [{
-                squares:Array(9).fill(null),
+                squares: Array(9).fill(null),
             }],
             xIsNext: true,
         }
     }
+
+    handleClick(i) {
+        const history = this.state.history;
+        const current = history[history.length - 1];
+        const squares = current.squares.slice();
+
+        if (calculateWinner(squares) || squares[i]) {
+            return;
+        }
+        squares[i] = this.state.xIsNext ? 'X' : 'O';
+        this.setState({
+            history: history.concat([{
+                //want to concat new history entries onto history in a way that doesn't
+                // mutate the existing array ===> use concat(), not push()
+                squares: squares,
+            }]),
+            xIsNext: !this.state.xIsNext,
+        });
+    }
+
     render() {
         const history = this.state.history;
         const current = history[history.length - 1];
@@ -147,6 +166,7 @@ function calculateWinner(squares) {
     }
     return null;
 }
+
 // ========================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
