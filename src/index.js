@@ -108,7 +108,10 @@ class Game extends React.Component {
     }
 
     handleClick(i) {
-        const history = this.state.history;
+        // const history = this.state.history;
+
+        //history changed to throw away future history if went back in time
+        const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
 
@@ -122,13 +125,17 @@ class Game extends React.Component {
                 // mutate the existing array ===> use concat(), not push()
                 squares: squares,
             }]),
+            stepNumber: history.length, //update after making a move to ensure we don't get stuck showing the same move after a new one has been made
             xIsNext: !this.state.xIsNext,
         });
     }
 
     render() {
         const history = this.state.history;
-        const current = history[history.length - 1];
+        // const current = history[history.length - 1];
+        //changing current to instead render the currently selected move
+        // according to stepNumber, rather than the last move in history
+        const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares)
 
     //map over history array to create a list of buttons to "jump" to past moves
