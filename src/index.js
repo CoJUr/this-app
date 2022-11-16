@@ -92,8 +92,19 @@ class Game extends React.Component {
             history: [{
                 squares: Array(9).fill(null),
             }],
+            //stepNumber tracks which step we're currently viewing. jumpTo
+            // will update it
+            stepNumber: 0,
             xIsNext: true,
         }
+    }
+
+    jumpTo(step) {
+        this.setState({
+            stepNumber: step,
+            //if stepNumber will turn even, set xIsNext to true
+            xIsNext: (step % 2) === 0,
+        });
     }
 
     handleClick(i) {
@@ -128,7 +139,7 @@ class Game extends React.Component {
                 'Go to game start';
             //create a button in a list item for each move in history
             return (
-                <li>
+                <li key={move}>
                     <button onClick={() => this.jumpTo(move)} > {desc} </button>
                 </li>
             );
